@@ -1,0 +1,39 @@
+data:
+  name: pi
+  dir: dataset/pi/data
+  radius: 0.5
+  max_size: 720
+  elements: [1,  6,  7,  8,  9, 16]
+
+model:
+  code_dim: 1024
+  coord_dim: 3
+  max_atoms: 10000
+  hidden_dim: 1024
+  n_layers: 3
+  input_scale: 4096
+  code_init_std: 0.01
+
+optim:
+  lr_dec: 0.0005
+  lr_code: 0.001
+  weight_decay: 0.0
+  code_reg_weight: 0.000001
+
+trainer:
+  seed: 42
+  n_samples: 10000
+  n_selected: 50
+  sampling_ratio: 0.8
+  batch_size: 32
+  num_workers: 8
+  max_epochs: 2000
+  val_ratio: 0.1
+  val_fixed_seed: 12345
+  accelerator: gpu
+  devices: 4
+  strategy: ddp
+  precision: bf16-mixed
+  log_dir: logs/pi
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1

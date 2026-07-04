@@ -1,0 +1,10 @@
+data:
+  name: qm9
+  dir: dataset/qm9/data
+  radius: 0.5
+  max_size: 8
+
+trainer:
+  n_samples: 4000
+  n_selected: 10
+  max_epochs: 1200

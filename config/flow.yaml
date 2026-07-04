@@ -1,0 +1,34 @@
+
+model:
+  code_dim: 1024
+  hidden_dim: 2048
+  n_layers: 6
+  time_dim: 256
+  condition_hidden_dim: 512
+  dropout: 0.1
+
+optim:
+  lr: 0.0001
+  weight_decay: 0.0001
+
+trainer:
+  seed: 42
+  batch_size: 64
+  num_workers: 0
+  pin_memory: false
+  max_epochs: 300
+  val_ratio: 0.1
+  accelerator: gpu
+  devices: 4
+  strategy: ddp
+  precision: 32-true
+  log_dir: logs/flow
+  log_every_n_steps: 10
+  check_val_every_n_epoch: 1
+  fast_dev_run: 1
+
+sample:
+  steps: 100
+  save_after_fit: true
+  n_samples: 16
+  output_path: logs/flow/samples.pt

@@ -1,0 +1,37 @@
+[project]
+name = "molgen"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "lightning>=2.6.0",
+    "rdkit>=2025.9.3",
+    "torch>=2.7.0",
+    "torchvision>=0.22.0",
+    "torch-geometric>=2.7.0",
+    "unimol-tools>=0.1.5",
+    "plotly>=6.5.0",
+    "tensorboard>=2.20.0",
+    "scikit-learn>=1.8.0",
+    "fairchem-core>=2.19.0",
+    "nglview>=4.0.1",
+    "mdanalysis>=2.10.0",
+    "sentence-transformers>=5.5.1",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://mirrors.nju.edu.cn/pytorch/whl/cu126"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu126", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu126", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[tool.uv.extra-build-dependencies]
+torch-cluster = ["torch"]
