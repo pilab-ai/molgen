@@ -1,0 +1,14 @@
+# Data files
+dataset/
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Lightning / training artifacts
+logs/
+
+# OS
+.DS_Store
