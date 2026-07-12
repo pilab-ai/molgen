@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>molgen Pipeline Test Report — QM9</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; padding: 2rem; }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; color: #0f172a; }
+  h2 { font-size: 1.35rem; font-weight: 600; margin: 2rem 0 0.75rem; color: #1e40af; border-bottom: 2px solid #dbeafe; padding-bottom: 0.35rem; }
+  h3 { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #334155; }
+  .subtitle { color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 1.5rem; margin-bottom: 1.25rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat { background: #fff; border-radius: 10px; padding: 1rem 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .stat .label { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em; }
+  .stat .value { font-size: 1.45rem; font-weight: 700; color: #0f172a; margin-top: 0.15rem; }
+  .stat .value.good { color: #16a34a; }
+  .stat .value.warn { color: #ea580c; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { background: #f1f5f9; padding: 0.6rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f1f5f9; }
+  tr:hover { background: #f8fafc; }
+  .chart { text-align: center; margin: 1rem 0; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 600; }
+  .tag-green { background: #dcfce7; color: #166534; }
+  .tag-blue { background: #dbeafe; color: #1e40af; }
+  .tag-orange { background: #ffedd5; color: #9a3412; }
+  code { background: #f1f5f9; padding: 0.15rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+  .config-table td:first-child { font-weight: 600; color: #475569; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🧪 molgen Pipeline Test Report</h1>
+<p class="subtitle">QM9 synthetic dataset &middot; 2026-07-12 11:21:58 &middot; device=mps</p>
+
+<!-- ============================================================ -->
+<h2>📊 Summary</h2>
+<div class="grid">
+  <div class="stat">
+    <div class="label">Dataset</div>
+    <div class="value" style="font-size:1.1rem">QM9 (synthetic)</div>
+  </div>
+  <div class="stat">
+    <div class="label">Molecules</div>
+    <div class="value">100</div>
+  </div>
+  <div class="stat">
+    <div class="label">Stage 1 Time</div>
+    <div class="value">33.3s</div>
+  </div>
+  <div class="stat">
+    <div class="label">Stage 2 Time</div>
+    <div class="value">2.8s</div>
+  </div>
+  <div class="stat">
+    <div class="label">Best Val Loss (S1)</div>
+    <div class="value ">3.0227</div>
+  </div>
+  <div class="stat">
+    <div class="label">Best Val Loss (S2)</div>
+    <div class="value ">1.8679</div>
+  </div>
+  <div class="stat">
+    <div class="label">Flow Cosine Sim</div>
+    <div class="value warn">0.2410</div>
+  </div>
+  <div class="stat">
+    <div class="label">Avg Sampled Atoms</div>
+    <div class="value">13.1</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>⚙️ Configuration</h2>
+<div class="card">
+<table class="config-table">
+  <tr><td>Dataset</td><td>QM9 synthetic (100 molecules)</td></tr>
+  <tr><td>Max atoms (padded)</td><td>29</td></tr>
+  <tr><td>Atom types</td><td>5 (H, C, N, O, F)</td></tr>
+  <tr><td>Position scale</td><td>8</td></tr>
+  <tr><td>Code dimension</td><td>256</td></tr>
+  <tr><td>Decoder hidden dim</td><td>256</td></tr>
+  <tr><td>Decoder layers</td><td>3</td></tr>
+  <tr><td>Stage 1 epochs</td><td>30</td></tr>
+  <tr><td>Stage 1 lr (decoder)</td><td>0.0005</td></tr>
+  <tr><td>Stage 1 lr (codes)</td><td>0.001</td></tr>
+  <tr><td>Flow hidden dim</td><td>256</td></tr>
+  <tr><td>Flow layers</td><td>3</td></tr>
+  <tr><td>Stage 2 epochs</td><td>30</td></tr>
+  <tr><td>Flow sample steps</td><td>50</td></tr>
+  <tr><td>Device</td><td>mps</td></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2>🔬 Stage 1: Auto-Decoder</h2>
+
+<div class="card">
+<h3>Training Curves</h3>
+<div class="chart"><svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border-radius:8px">
+  <text x="350" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Stage 1: Auto-Decoder Total Loss</text>
+  <line x1="70" y1="260.0" x2="680" y2="260.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="260.0" text-anchor="end" font-size="10" fill="#6b7280">1.2531</text><line x1="70" y1="214.0" x2="680" y2="214.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="214.0" text-anchor="end" font-size="10" fill="#6b7280">1.9325</text><line x1="70" y1="168.0" x2="680" y2="168.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="168.0" text-anchor="end" font-size="10" fill="#6b7280">2.6119</text><line x1="70" y1="122.0" x2="680" y2="122.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="122.0" text-anchor="end" font-size="10" fill="#6b7280">3.2913</text><line x1="70" y1="76.0" x2="680" y2="76.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="76.0" text-anchor="end" font-size="10" fill="#6b7280">3.9708</text><line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="30.0" text-anchor="end" font-size="10" fill="#6b7280">4.6502</text>
+  <line x1="70" y1="30" x2="70" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="260" x2="680" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <text x="350" y="285" text-anchor="middle" font-size="11" fill="#6b7280">Epoch</text>
+  <polyline points="70.0,30.0 91.0,111.9 112.1,121.0 133.1,129.2 154.1,140.7 175.2,151.7 196.2,157.7 217.2,160.5 238.3,164.2 259.3,166.7 280.3,168.8 301.4,172.3 322.4,174.1 343.4,176.1 364.5,176.5 385.5,177.1 406.6,178.8 427.6,180.8 448.6,181.5 469.7,185.9 490.7,189.7 511.7,193.4 532.8,199.3 553.8,208.0 574.8,214.5 595.9,226.0 616.9,234.0 637.9,239.6 659.0,250.7 680.0,260.0" fill="none" stroke="#2563eb" stroke-width="2"/><polyline points="70.0,111.8 91.0,117.5 112.1,124.1 133.1,135.1 154.1,140.0 175.2,140.2 196.2,133.2 217.2,127.7 238.3,123.5 259.3,126.8 280.3,129.9 301.4,127.9 322.4,124.1 343.4,123.5 364.5,118.2 385.5,123.2 406.6,119.9 427.6,116.9 448.6,125.8 469.7,121.5 490.7,122.1 511.7,117.9 532.8,116.2 553.8,117.3 574.8,106.2 595.9,100.9 616.9,81.4 637.9,75.8 659.0,89.7 680.0,68.5" fill="none" stroke="#dc2626" stroke-width="2"/>
+</svg></div>
+<div style="margin:8px 0;font-size:12px;color:#374151"><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#2563eb;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Train Loss</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Val Loss</span></div>
+</div>
+
+<div class="card">
+<h3>Loss Breakdown (Train)</h3>
+<div class="chart"><svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border-radius:8px">
+  <text x="350" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Stage 1: Training Loss Breakdown</text>
+  <line x1="70" y1="260.0" x2="680" y2="260.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="260.0" text-anchor="end" font-size="10" fill="#6b7280">0.0275</text><line x1="70" y1="214.0" x2="680" y2="214.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="214.0" text-anchor="end" font-size="10" fill="#6b7280">0.4828</text><line x1="70" y1="168.0" x2="680" y2="168.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="168.0" text-anchor="end" font-size="10" fill="#6b7280">0.9380</text><line x1="70" y1="122.0" x2="680" y2="122.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="122.0" text-anchor="end" font-size="10" fill="#6b7280">1.3932</text><line x1="70" y1="76.0" x2="680" y2="76.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="76.0" text-anchor="end" font-size="10" fill="#6b7280">1.8484</text><line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="30.0" text-anchor="end" font-size="10" fill="#6b7280">2.3036</text>
+  <line x1="70" y1="30" x2="70" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="260" x2="680" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <text x="350" y="285" text-anchor="middle" font-size="11" fill="#6b7280">Epoch</text>
+  <polyline points="70.0,191.2 91.0,200.1 112.1,206.3 133.1,216.4 154.1,232.1 175.2,246.2 196.2,254.6 217.2,256.3 238.3,257.1 259.3,257.6 280.3,257.1 301.4,258.3 322.4,259.4 343.4,258.8 364.5,258.2 385.5,257.3 406.6,257.3 427.6,258.5 448.6,257.4 469.7,257.8 490.7,258.5 511.7,259.5 532.8,260.0 553.8,259.7 574.8,260.0 595.9,259.5 616.9,259.5 637.9,259.6 659.0,260.0 680.0,259.7" fill="none" stroke="#2563eb" stroke-width="2"/><polyline points="70.0,97.3 91.0,98.2 112.1,100.8 133.1,100.9 154.1,101.9 175.2,103.4 196.2,104.2 217.2,106.7 238.3,110.7 259.3,113.3 280.3,117.0 301.4,119.9 322.4,121.1 343.4,123.3 364.5,124.6 385.5,125.4 406.6,127.4 427.6,127.8 448.6,128.6 469.7,132.2 490.7,135.0 511.7,138.1 532.8,143.9 553.8,154.9 574.8,162.8 595.9,173.1 616.9,180.1 637.9,185.3 659.0,195.4 680.0,208.2" fill="none" stroke="#dc2626" stroke-width="2"/><polyline points="70.0,30.0 91.0,142.5 112.1,147.2 133.1,149.2 154.1,149.7 175.2,150.5 196.2,150.3 217.2,150.2 238.3,150.9 259.3,151.6 280.3,151.5 301.4,152.7 322.4,153.0 343.4,154.4 364.5,154.3 385.5,155.3 406.6,155.9 427.6,157.1 448.6,158.6 469.7,161.2 490.7,163.2 511.7,164.7 532.8,167.3 553.8,169.6 574.8,171.0 595.9,178.3 616.9,183.4 637.9,186.4 659.0,192.4 680.0,193.8" fill="none" stroke="#16a34a" stroke-width="2"/>
+</svg></div>
+<div style="margin:8px 0;font-size:12px;color:#374151"><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#2563eb;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Exist BCE</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Atom CE</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#16a34a;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Coord L1</span></div>
+</div>
+
+<div class="card">
+<h3>Latent Code Statistics</h3>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Mean</td><td>0.000034</td></tr>
+  <tr><td>Std</td><td>0.012454</td></tr>
+  <tr><td>Min</td><td>-0.044830</td></tr>
+  <tr><td>Max</td><td>0.046384</td></tr>
+  <tr><td>Norm (mean per-code)</td><td>0.198432</td></tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2>🌊 Stage 2: Latent Flow Matching</h2>
+
+<div class="card">
+<h3>MSE Loss</h3>
+<div class="chart"><svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border-radius:8px">
+  <text x="350" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Stage 2: Flow Matching MSE Loss</text>
+  <line x1="70" y1="260.0" x2="680" y2="260.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="260.0" text-anchor="end" font-size="10" fill="#6b7280">1.8679</text><line x1="70" y1="214.0" x2="680" y2="214.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="214.0" text-anchor="end" font-size="10" fill="#6b7280">1.9599</text><line x1="70" y1="168.0" x2="680" y2="168.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="168.0" text-anchor="end" font-size="10" fill="#6b7280">2.0519</text><line x1="70" y1="122.0" x2="680" y2="122.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="122.0" text-anchor="end" font-size="10" fill="#6b7280">2.1439</text><line x1="70" y1="76.0" x2="680" y2="76.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="76.0" text-anchor="end" font-size="10" fill="#6b7280">2.2358</text><line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="30.0" text-anchor="end" font-size="10" fill="#6b7280">2.3278</text>
+  <line x1="70" y1="30" x2="70" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="260" x2="680" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <text x="350" y="285" text-anchor="middle" font-size="11" fill="#6b7280">Epoch</text>
+  <polyline points="70.0,30.0 91.0,33.7 112.1,74.9 133.1,74.4 154.1,102.2 175.2,134.6 196.2,148.6 217.2,139.6 238.3,165.3 259.3,191.4 280.3,197.0 301.4,205.5 322.4,197.1 343.4,200.5 364.5,197.9 385.5,217.8 406.6,216.9 427.6,220.4 448.6,239.8 469.7,232.8 490.7,221.8 511.7,244.4 532.8,211.5 553.8,240.3 574.8,236.9 595.9,224.1 616.9,250.9 637.9,243.2 659.0,224.8 680.0,224.8" fill="none" stroke="#2563eb" stroke-width="2"/><polyline points="70.0,203.9 91.0,204.3 112.1,233.4 133.1,147.3 154.1,169.9 175.2,155.8 196.2,205.5 217.2,175.3 238.3,203.6 259.3,206.0 280.3,202.8 301.4,216.2 322.4,197.9 343.4,208.0 364.5,201.7 385.5,243.4 406.6,252.2 427.6,246.6 448.6,260.0 469.7,235.9 490.7,249.9 511.7,236.8 532.8,234.7 553.8,211.4 574.8,218.9 595.9,237.3 616.9,207.3 637.9,226.2 659.0,204.8 680.0,252.6" fill="none" stroke="#dc2626" stroke-width="2"/>
+</svg></div>
+<div style="margin:8px 0;font-size:12px;color:#374151"><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#2563eb;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Train Loss</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Val Loss</span></div>
+</div>
+
+<div class="card">
+<h3>Velocity Cosine Similarity</h3>
+<div class="chart"><svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border-radius:8px">
+  <text x="350" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Stage 2: Velocity Cosine Similarity</text>
+  <line x1="70" y1="260.0" x2="680" y2="260.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="260.0" text-anchor="end" font-size="10" fill="#6b7280">-0.0608</text><line x1="70" y1="214.0" x2="680" y2="214.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="214.0" text-anchor="end" font-size="10" fill="#6b7280">0.0025</text><line x1="70" y1="168.0" x2="680" y2="168.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="168.0" text-anchor="end" font-size="10" fill="#6b7280">0.0658</text><line x1="70" y1="122.0" x2="680" y2="122.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="122.0" text-anchor="end" font-size="10" fill="#6b7280">0.1291</text><line x1="70" y1="76.0" x2="680" y2="76.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="76.0" text-anchor="end" font-size="10" fill="#6b7280">0.1923</text><line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="30.0" text-anchor="end" font-size="10" fill="#6b7280">0.2556</text>
+  <line x1="70" y1="30" x2="70" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="260" x2="680" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <text x="350" y="285" text-anchor="middle" font-size="11" fill="#6b7280">Epoch</text>
+  <polyline points="70.0,210.0 91.0,198.7 112.1,179.6 133.1,167.3 154.1,151.1 175.2,131.2 196.2,123.2 217.2,117.3 238.3,100.5 259.3,88.3 280.3,73.4 301.4,79.2 322.4,67.6 343.4,64.1 364.5,75.0 385.5,56.1 406.6,47.2 427.6,52.3 448.6,40.6 469.7,47.6 490.7,42.7 511.7,33.3 532.8,52.1 553.8,36.9 574.8,39.0 595.9,53.0 616.9,30.7 637.9,30.0 659.0,40.8 680.0,40.6" fill="none" stroke="#2563eb" stroke-width="2"/><polyline points="70.0,203.6 91.0,215.1 112.1,194.9 133.1,228.4 154.1,219.8 175.2,230.1 196.2,221.6 217.2,247.8 238.3,219.1 259.3,234.9 280.3,206.0 301.4,221.2 322.4,213.2 343.4,221.6 364.5,260.0 385.5,221.4 406.6,208.6 427.6,221.1 448.6,205.0 469.7,232.3 490.7,185.0 511.7,236.5 532.8,235.6 553.8,244.4 574.8,225.5 595.9,217.7 616.9,229.1 637.9,207.9 659.0,223.0 680.0,215.3" fill="none" stroke="#dc2626" stroke-width="2"/>
+</svg></div>
+<div style="margin:8px 0;font-size:12px;color:#374151"><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#2563eb;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Train Cosine Sim</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Val Cosine Sim</span></div>
+</div>
+
+<div class="card">
+<h3>Velocity Norms (Train)</h3>
+<div class="chart"><svg width="700" height="300" xmlns="http://www.w3.org/2000/svg" style="background:#fff;border-radius:8px">
+  <text x="350" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f2937">Stage 2: Velocity Norms</text>
+  <line x1="70" y1="260.0" x2="680" y2="260.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="260.0" text-anchor="end" font-size="10" fill="#6b7280">7.7915</text><line x1="70" y1="214.0" x2="680" y2="214.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="214.0" text-anchor="end" font-size="10" fill="#6b7280">10.8091</text><line x1="70" y1="168.0" x2="680" y2="168.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="168.0" text-anchor="end" font-size="10" fill="#6b7280">13.8267</text><line x1="70" y1="122.0" x2="680" y2="122.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="122.0" text-anchor="end" font-size="10" fill="#6b7280">16.8444</text><line x1="70" y1="76.0" x2="680" y2="76.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="76.0" text-anchor="end" font-size="10" fill="#6b7280">19.8620</text><line x1="70" y1="30.0" x2="680" y2="30.0" stroke="#e5e7eb" stroke-width="0.5"/><text x="65" y="30.0" text-anchor="end" font-size="10" fill="#6b7280">22.8796</text>
+  <line x1="70" y1="30" x2="70" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="260" x2="680" y2="260" stroke="#9ca3af" stroke-width="1"/>
+  <text x="350" y="285" text-anchor="middle" font-size="11" fill="#6b7280">Epoch</text>
+  <polyline points="70.0,239.1 91.0,241.3 112.1,242.9 133.1,246.4 154.1,246.4 175.2,246.5 196.2,246.6 217.2,247.0 238.3,249.1 259.3,249.3 280.3,249.5 301.4,251.1 322.4,251.2 343.4,252.1 364.5,252.9 385.5,254.7 406.6,254.3 427.6,256.5 448.6,255.4 469.7,255.3 490.7,256.8 511.7,256.6 532.8,257.3 553.8,258.5 574.8,258.3 595.9,259.3 616.9,258.3 637.9,258.7 659.0,260.0 680.0,258.6" fill="none" stroke="#2563eb" stroke-width="2"/><polyline points="70.0,33.2 91.0,30.8 112.1,33.7 133.1,30.0 154.1,31.9 175.2,33.8 196.2,34.6 217.2,31.8 238.3,32.6 259.3,35.0 280.3,33.3 301.4,35.7 322.4,31.5 343.4,31.5 364.5,32.9 385.5,32.7 406.6,31.2 427.6,32.3 448.6,34.0 469.7,34.1 490.7,30.8 511.7,33.2 532.8,30.5 553.8,32.9 574.8,32.5 595.9,32.9 616.9,33.6 637.9,32.2 659.0,30.4 680.0,30.9" fill="none" stroke="#dc2626" stroke-width="2"/>
+</svg></div>
+<div style="margin:8px 0;font-size:12px;color:#374151"><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#2563eb;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Predicted Norm</span><span style="display:inline-block;margin-right:16px"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Target Norm</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>🧬 Sampling & Reconstruction</h2>
+
+<div class="card">
+<h3>Flow-Sampled Molecules</h3>
+<p style="font-size:0.85rem;color:#64748b;margin-bottom:0.75rem">
+  Molecules sampled by: noise → Euler ODE solver (50 steps) → unnormalize → decoder → atom existence/type/coords.
+  Atom type indices: 0=H, 1=C, 2=N, 3=O, 4=F.
+</p>
+<table>
+  <tr><th>#</th><th>Predicted Atoms</th><th>Atom Types</th><th>Coord Mean</th><th>Coord Std</th></tr>
+  <tr>
+            <td>0</td>
+            <td>11</td>
+            <td>4, 4, 1, 4, 1, 2, 1, 4, 2, 1, 3</td>
+            <td>-0.0078</td>
+            <td>0.0427</td>
+        </tr><tr>
+            <td>1</td>
+            <td>12</td>
+            <td>4, 4, 1, 4, 0, 2, 1, 4, 0, 1, 0, 4</td>
+            <td>-0.0054</td>
+            <td>0.0401</td>
+        </tr><tr>
+            <td>2</td>
+            <td>12</td>
+            <td>4, 1, 1, 4, 0, 2, 1, 1, 0, 1, 0, 4</td>
+            <td>-0.0063</td>
+            <td>0.0412</td>
+        </tr><tr>
+            <td>3</td>
+            <td>14</td>
+            <td>0, 4, 1, 4, 0, 2, 1, 1, 2, 1, 0, 4...</td>
+            <td>-0.0038</td>
+            <td>0.0396</td>
+        </tr><tr>
+            <td>4</td>
+            <td>12</td>
+            <td>4, 4, 1, 4, 1, 2, 1, 4, 2, 1, 1, 3</td>
+            <td>-0.0088</td>
+            <td>0.0403</td>
+        </tr><tr>
+            <td>5</td>
+            <td>14</td>
+            <td>1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 4...</td>
+            <td>0.0134</td>
+            <td>0.0389</td>
+        </tr><tr>
+            <td>6</td>
+            <td>15</td>
+            <td>1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 4...</td>
+            <td>0.0081</td>
+            <td>0.0414</td>
+        </tr><tr>
+            <td>7</td>
+            <td>14</td>
+            <td>0, 1, 1, 4, 0, 2, 1, 1, 0, 1, 1, 4...</td>
+            <td>0.0065</td>
+            <td>0.0380</td>
+        </tr><tr>
+            <td>8</td>
+            <td>10</td>
+            <td>4, 4, 1, 4, 0, 2, 3, 4, 2, 3</td>
+            <td>-0.0231</td>
+            <td>0.0421</td>
+        </tr><tr>
+            <td>9</td>
+            <td>17</td>
+            <td>1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 4...</td>
+            <td>0.0186</td>
+            <td>0.0418</td>
+        </tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Ground-Truth Code Reconstruction</h3>
+<p style="font-size:0.85rem;color:#64748b;margin-bottom:0.75rem">
+  Decoder applied to the learned latent codes from Stage 1 (no flow sampling).
+</p>
+<table>
+  <tr><th>#</th><th>Predicted Atoms</th></tr>
+  <tr>
+            <td>0</td>
+            <td>14</td>
+        </tr><tr>
+            <td>1</td>
+            <td>7</td>
+        </tr><tr>
+            <td>2</td>
+            <td>12</td>
+        </tr><tr>
+            <td>3</td>
+            <td>8</td>
+        </tr><tr>
+            <td>4</td>
+            <td>10</td>
+        </tr><tr>
+            <td>5</td>
+            <td>10</td>
+        </tr><tr>
+            <td>6</td>
+            <td>14</td>
+        </tr><tr>
+            <td>7</td>
+            <td>15</td>
+        </tr><tr>
+            <td>8</td>
+            <td>15</td>
+        </tr><tr>
+            <td>9</td>
+            <td>12</td>
+        </tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2>📝 Notes</h2>
+<div class="card" style="font-size:0.88rem;color:#475569;line-height:1.65">
+  <ul style="padding-left:1.25rem">
+    <li>This report uses <strong>synthetic QM9 data</strong> (100 random graphs) generated by <code>create_test_datasets.py</code>.</li>
+    <li>Stage 1 auto-decoder learns per-molecule latent codes via <code>nn.Embedding</code> + slot-FiLM transformer.</li>
+    <li>Stage 2 flow matching trains an <strong>unconditional</strong> velocity field (QM9 has no PI-specific conditions like degree/temperature).</li>
+    <li>Training uses reduced epochs and model sizes for testing purposes — production configs use 1000+ epochs and larger hidden dims.</li>
+    <li>All runs on <strong>mps</strong> — GPU training would be significantly faster.</li>
+  </ul>
+</div>
+
+<div style="text-align:center;color:#94a3b8;font-size:0.78rem;margin-top:2rem;padding-top:1rem;border-top:1px solid #e2e8f0">
+  Generated by <code>test_pipeline_qm9.py</code> &middot; molgen pipeline test &middot; 2026-07-12 11:21:58
+</div>
+
+</div>
+</body>
+</html>
